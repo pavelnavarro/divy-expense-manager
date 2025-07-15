@@ -1,2 +1,5 @@
-dotenv
+python-dotenv
 google-generativeai
+flask
+flask_sqlalchemy
+flask_cors
