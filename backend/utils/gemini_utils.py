@@ -1,11 +1,16 @@
 import os
-from google import genai
 from dotenv import load_dotenv
+from google.generativeai import configure, GenerativeModel
 
+# Load environment variables
 load_dotenv()
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-model = genai.GenerativeModel("gemini-2.5-flash")
+# Configure Gemini API
+configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+# Create the Gemini model instance
+model = GenerativeModel("gemini-2.5-flash")
+
 
 def categorize_expense_text(description, context_notes=None):
     """Use Gemini to suggest a category and insight from a text-only expense"""
@@ -22,6 +27,7 @@ Please return:
 """
     response = model.generate_content(prompt)
     return response.text
+
 
 def split_expense_with_context(description, amount, members, context_note):
     """Gemini suggests how to split a group expense based on user notes and participants"""
@@ -40,6 +46,7 @@ Please return:
 """
     response = model.generate_content(prompt)
     return response.text
+
 
 def extract_from_receipt(image_data_bytes, context_note=""):
     """Gemini parses a receipt image and returns key data."""
@@ -60,3 +67,14 @@ def extract_from_receipt(image_data_bytes, context_note=""):
         ]
     )
     return response.text
+
+
+def test1():
+    prompt = "just return hello"
+    response = model.generate_content(prompt)
+    return response.text
+
+
+# Run test
+if __name__ == "__main__":
+    print(test1())
