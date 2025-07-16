@@ -1,1 +1,91 @@
 /* Add your custom CSS */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+/* #font stack */
+:root {
+  --font-primary: 'Inter', Arial, sans-serif;
+  --font-mono: Consolas, Monaco, "Courier New", monospace;
+}
+.expense-amount {
+  color: #E63946;
+  font-weight: bold;
+}
+/* 🔠 Typography */
+body {
+  font-family: var(--font-primary);
+  background-color: #FCFCFC;
+  color: #343A40;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+}
+
+/* 🧾 Expense Text */
+.expense-amount {
+  color: #E63946; /* red for negative amounts */
+  font-weight: bold;
+}
+
+/* Positive balance */
+.income-amount {
+  color: #2A9D8F;
+  font-weight: bold;
+}
+
+/* Accent Button */
+.btn-accent {
+  background-color: #26148b;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+.btn-accent:hover {
+  background-color: #497bdf;
+}
+
+/* 📋 Cards / Containers */
+.card-custom {
+  background-color: white;
+  border: 1px solid #E0E0E0;
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  margin-bottom: 1.5rem;
+}
+
+/*  Navbar */
+.navbar-brand {
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+.navbar .nav-link {
+  margin-left: 1rem;
+  font-weight: 500;
+  color: #343A40;
+}
+
+.navbar .nav-link:hover {
+  color: #F4A261;
+}
+
+/* Forms */
+.form-control,
+.form-select {
+  border-radius: 8px;
+  border: 1px solid #DADADA;
+  padding: 0.5rem;
+}
+
+input::placeholder {
+  color: #999;
+}
+
+
+
+
