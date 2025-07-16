@@ -1,1 +1,9 @@
-<!-- Dashboard -->
+{% extends "layout.html" %}
+{% block title %}Dashboard | Divy{% endblock %}
+{% block content %}
+<h2>Dashboard</h2>
+<div class="card"><h3>Personal Spending</h3><p>$1,250</p></div>
+<div class="card"><h3>Shared Balances</h3><p>$320</p></div>
+<div class="card"><h3>Budget Status</h3><p>Under budget</p></div>
+<div class="card"><h3>Recent Expenses</h3><ul><li>Groceries – $45</li><li>Rent – $500</li></ul></div>
+{% endblock %}

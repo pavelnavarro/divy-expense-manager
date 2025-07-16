@@ -1,1 +1,26 @@
-<!-- Home page -->
+{% extends "layout.html" %}
+{% block title %}Welcome to Divy{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h2>Welcome to Divy 🎯</h2>
+  <p>Track personal and shared expenses, manage payments, and gain insights into your budget — all in one place.</p>
+</section>
+
+<section class="card">
+  <h3>Features</h3>
+  <ul>
+    <li>📊 Visualize your spending</li>
+    <li>👥 Track shared expenses with friends or roommates</li>
+    <li>💸 View pending payments and past transactions</li>
+    <li>🔔 Set budget alerts and preferences</li>
+  </ul>
+</section>
+
+<section class="card">
+  <p>
+    <a href="{{ url_for('login') }}">Sign In</a> or
+    <a href="{{ url_for('register') }}">Create an Account</a>
+  </p>
+</section>
+{% endblock %}

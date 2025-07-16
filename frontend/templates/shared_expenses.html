@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block title %}Shared Expenses | Divy{% endblock %}
+{% block content %}
+<h2>Shared Expenses</h2>
+<div class="card">
+  <form>
+    <label>Expense</label>
+    <input type="text" placeholder="e.g. Dinner" />
+    <label>Split With</label>
+    <input type="text" placeholder="Names" />
+    <button type="submit">Add</button>
+  </form>
+</div>
+{% endblock %}
