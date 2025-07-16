@@ -1,48 +1,48 @@
 # app.py
-from flask import Flask, jsonify
-from flask_jwt_extended import JWTManager
+
+import os
+from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
-import os
-from datetime import timedelta
+from backend.config import Config
 
-from extensions import db, bcrypt
-from backend.routes.shared_routes import shared_bp
-from backend.routes.personal_routes import personal_bp
-from backend.routes.auth_routes import auth_bp  # if you add one
+# extensions
+from backend.extensions import db, bcrypt, jwt
+# blueprints
+from backend.routes.auth_routes      import auth_bp
+from backend.routes.personal_routes  import personal_bp
+from backend.routes.shared_routes    import shared_bp
+from backend.routes.calendar_routes  import calendar_bp
 
-load_dotenv()
+
 
 def create_app():
+
+    # 2) create app and load config
     app = Flask(__name__)
+    app.config.from_object(Config)
 
-    # App Config
-    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-key')
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///expense_manager.db')
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'jwt-dev-key')
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
-
-    # Initialize extensions
+    # 3) init extensions
     db.init_app(app)
     bcrypt.init_app(app)
-    JWTManager(app)
-    CORS(app, origins=["http://localhost:3000", "http://127.0.0.1:3000"])
+    jwt.init_app(app)
+    CORS(app, origins=app.config['CORS_ORIGINS'])
 
-    # Register Blueprints
-    app.register_blueprint(shared_bp)
-    app.register_blueprint(personal_bp)
-    app.register_blueprint(auth_bp)  # if exists
-
-    # Basic health check
-    @app.route("/health")
-    def health():
-        return jsonify({"status": "healthy"})
+    # 4) register blueprints
+    app.register_blueprint(auth_bp,      url_prefix='/api/auth')
+    app.register_blueprint(personal_bp,  url_prefix='/api/personal')
+    app.register_blueprint(shared_bp,    url_prefix='/api/shared')
+    app.register_blueprint(calendar_bp,  url_prefix='/api/calendar')
 
     return app
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app = create_app()
+    # create tables if they don't exist
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(
+        debug=os.getenv('FLASK_DEBUG', 'True').lower() == 'true',
+        host=os.getenv('FLASK_HOST', '0.0.0.0'),
+        port=int(os.getenv('FLASK_PORT', 5000))
+    )

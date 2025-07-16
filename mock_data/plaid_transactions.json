@@ -1,1 +1,54 @@
-[]
+{
+  "transactions": [
+    {
+      "description": "Starbucks Coffee",
+      "amount": 5.75,
+      "transaction_date": "2025-07-14"
+    },
+    {
+      "description": "Amazon - Wireless Mouse",
+      "amount": 22.99,
+      "transaction_date": "2025-07-13"
+    },
+    {
+      "description": "Uber Ride",
+      "amount": 15.40,
+      "transaction_date": "2025-07-12"
+    },
+    {
+      "description": "Netflix Subscription",
+      "amount": 13.99,
+      "transaction_date": "2025-07-10"
+    },
+    {
+      "description": "McDonald's Lunch",
+      "amount": 9.50,
+      "transaction_date": "2025-07-10"
+    },
+    {
+      "description": "Spotify Premium",
+      "amount": 10.99,
+      "transaction_date": "2025-07-08"
+    },
+    {
+      "description": "Walmart Groceries",
+      "amount": 76.24,
+      "transaction_date": "2025-07-07"
+    },
+    {
+      "description": "Shell Gas Station",
+      "amount": 40.00,
+      "transaction_date": "2025-07-06"
+    },
+    {
+      "description": "Apple iCloud",
+      "amount": 0.99,
+      "transaction_date": "2025-07-05"
+    },
+    {
+      "description": "CVS Pharmacy",
+      "amount": 18.30,
+      "transaction_date": "2025-07-04"
+    }
+  ]
+}

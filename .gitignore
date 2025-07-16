@@ -1,6 +1,28 @@
-__pycache__/
+# Environment
 .env
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+
+# SQLite
+*.db
 *.sqlite3
-*.pyc
+
+# Virtual envs
+.venv/
+venv/
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node (if you ever add frontend)
 node_modules/
-.env.example
+
+# IDEs & logs
+.vscode/
+.idea/
+*.log
