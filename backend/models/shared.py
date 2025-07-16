@@ -1,5 +1,5 @@
 from datetime import datetime
-from backend.app import db 
+from backend.extensions import db
 
 group_members = db.Table('group_members',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),

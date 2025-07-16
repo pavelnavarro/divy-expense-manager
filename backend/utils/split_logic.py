@@ -47,3 +47,17 @@ def calculate_balances_from_splits(splits, paid_by_id):
 
     balances[paid_by_id] = balances.get(paid_by_id, 0) + total
     return balances
+
+def filter_members(members, excluded_members):
+    """
+    Returns a list of members excluding those who opted out.
+
+    Args:
+        members (list): List of all user IDs or usernames.
+        excluded_members (list): Subset to exclude.
+
+    Returns:
+        list: Filtered list.
+    """
+    return [member for member in members if member not in excluded_members]
+
