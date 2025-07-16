@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from backend.models.shared import Group, SharedExpense, Split, Payment
 from backend.utils.split_logic import calculate_balances_from_splits, minimize_cash_flow,filter_members
 from backend.utils.gemini_utils import split_expense_with_context,extract_from_receipt
-from backend.app import db
+from backend.extensions import db
 
 shared_bp = Blueprint('shared', __name__)
 
@@ -41,6 +41,10 @@ def add_shared_expense():
             is_paid=(uid == paid_by_id)
         )
         db.session.add(split)
+        
+    db.session.commit()  # Saves to DB
+
+    return jsonify({"message": "Expense added", "expense_id": expense.id}), 201 
 
 @shared_bp.route('/shared/upload-receipt', methods=['POST'])
 def upload_receipt():
@@ -173,3 +177,153 @@ def record_group_payment(group_id):
     db.session.commit()
 
     return jsonify({"message": "Payment recorded successfully"})
+
+@shared_bp.route('/shared/<int:group_id>/balances', methods=['GET'])
+def get_group_balances(group_id):
+    group = Group.query.get_or_404(group_id)
+
+    # Get all expenses in the group
+    expenses = SharedExpense.query.filter_by(group_id=group_id).all()
+
+    # Initialize balances dictionary
+    net_balances = {}
+
+    for expense in expenses:
+        splits = Split.query.filter_by(expense_id=expense.id).all()
+        balances = calculate_balances_from_splits(splits, expense.paid_by)
+
+        # Accumulate each user's balance
+        for uid, value in balances.items():
+            net_balances[uid] = net_balances.get(uid, 0) + value
+
+    # Optional: Return a simplified transaction list using greedy algo
+    simplified_transactions = minimize_cash_flow(net_balances.copy())
+
+    return jsonify({
+        "net_balances": net_balances,
+        "simplified_transactions": simplified_transactions
+    })
+
+@shared_bp.route('/shared/group/create', methods=['POST'])
+def create_group():
+    data = request.json
+    group_name = data.get('name')
+    member_ids = data.get('members', [])  # list of user IDs
+    created_by = data.get('created_by')   # user ID
+
+    if not group_name or not created_by:
+        return jsonify({"error": "Missing group name or creator"}), 400
+
+    # Create the group
+    group = Group(name=group_name, created_by=created_by)
+
+    # Add members (User objects)
+    from backend.models.user import User
+    users = User.query.filter(User.id.in_(member_ids)).all()
+    group.members.extend(users)
+
+    db.session.add(group)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Group created successfully",
+        "group_id": group.id,
+        "members": [user.id for user in users]
+    }), 201
+
+@shared_bp.route('/shared/groups/<int:user_id>', methods=['GET'])
+def get_user_groups(user_id):
+    from backend.models.user import User
+    user = User.query.get_or_404(user_id)
+
+    groups = user.groups.all()  # Because of lazy='dynamic' in the relationship
+
+    result = []
+    for group in groups:
+        result.append({
+            "group_id": group.id,
+            "group_name": group.name,
+            "created_by": group.created_by,
+            "created_at": group.created_at.isoformat()
+        })
+
+    return jsonify({"groups": result})
+
+@shared_bp.route('/shared/<int:group_id>/balances', methods=['GET'])
+def get_group_balances(group_id):
+    group = Group.query.get_or_404(group_id)
+    members = [user.id for user in group.members]
+
+    # Aggregate unpaid splits
+    all_splits = Split.query.join(SharedExpense).filter(
+        SharedExpense.group_id == group_id,
+        Split.is_paid == False
+    ).all()
+
+    # Group splits by expense
+    expense_splits_map = {}
+    for split in all_splits:
+        expense_splits_map.setdefault(split.expense_id, []).append(split)
+
+    # Calculate net balances
+    net_balances = {}
+    for expense_id, splits in expense_splits_map.items():
+        expense = SharedExpense.query.get(expense_id)
+        balances = calculate_balances_from_splits(splits, expense.paid_by)
+        for user_id, amount in balances.items():
+            net_balances[user_id] = net_balances.get(user_id, 0) + amount
+
+    # Convert user_id → username (optional, for frontend clarity)
+    from backend.models.user import User
+    id_to_name = {user.id: user.username for user in User.query.filter(User.id.in_(net_balances))}
+
+    # Human-readable balances
+    readable_balances = {id_to_name[uid]: round(amt, 2) for uid, amt in net_balances.items()}
+
+    # Minimize transactions
+    transactions = minimize_cash_flow({id_to_name[k]: v for k, v in net_balances.items()})
+
+    return jsonify({
+        "balances": readable_balances,
+        "settlements": transactions
+    })
+
+@shared_bp.route('/shared/group/create', methods=['POST'])
+def create_group():
+    data = request.json
+    name = data.get('name')
+    created_by = data.get('created_by')  # user ID
+    member_ids = data.get('members', [])
+
+    if not name or not created_by:
+        return jsonify({"error": "Missing group name or creator ID"}), 400
+
+    # Create group
+    group = Group(name=name, created_by=created_by)
+    db.session.add(group)
+    db.session.flush()  # get group.id before committing
+
+    # Add members
+    from backend.models.user import User
+    users = User.query.filter(User.id.in_(member_ids)).all()
+    for user in users:
+        group.members.append(user)
+
+    db.session.commit()
+    return jsonify({
+        "message": "Group created",
+        "group_id": group.id,
+        "name": group.name,
+        "members": [user.username for user in group.members]
+    })
+
+@shared_bp.route('/shared/group/<int:group_id>', methods=['GET'])
+def get_group_info(group_id):
+    group = Group.query.get_or_404(group_id)
+    return jsonify({
+        "id": group.id,
+        "name": group.name,
+        "created_by": group.created_by,
+        "members": [{"id": u.id, "username": u.username} for u in group.members]
+    })
+
