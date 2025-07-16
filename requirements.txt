@@ -1,5 +1,10 @@
+Flask
+flask_sqlalchemy
+flask_bcrypt
+flask_jwt_extended
+flask_cors
 python-dotenv
 google-generativeai
-flask
-flask_sqlalchemy
-flask_cors
+google-api-python-client
+google-auth
+google-auth-oauthlib

@@ -1,1 +1,52 @@
-[]
+{
+  "payments": [
+    {
+      "from_user": 1,
+      "to_user": 2,
+      "amount": 25.00,
+      "status": "completed"
+    },
+    {
+      "from_user": 2,
+      "to_user": 3,
+      "amount": 13.50,
+      "status": "completed"
+    },
+    {
+      "from_user": 3,
+      "to_user": 1,
+      "amount": 10.00,
+      "status": "pending"
+    },
+    {
+      "from_user": 1,
+      "to_user": 4,
+      "amount": 5.75,
+      "status": "completed"
+    },
+    {
+      "from_user": 4,
+      "to_user": 1,
+      "amount": 20.00,
+      "status": "completed"
+    },
+    {
+      "from_user": 2,
+      "to_user": 4,
+      "amount": 8.99,
+      "status": "pending"
+    },
+    {
+      "from_user": 5,
+      "to_user": 1,
+      "amount": 17.45,
+      "status": "completed"
+    },
+    {
+      "from_user": 3,
+      "to_user": 2,
+      "amount": 30.00,
+      "status": "completed"
+    }
+  ]
+}
