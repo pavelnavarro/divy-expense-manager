@@ -85,9 +85,11 @@ def add_shared_expense():
 
     group = Group.query.get_or_404(group_id)
     member_ids = [u.id for u in group.members]
-    included = filter_members(member_ids, excluded)
+    included_users = [u for u in group.members if u.id not in excluded]
+    included = [u.id for u in included_users]
+    participants = [u.username for u in included_users]
 
-    splits_suggestion = split_expense_with_context(description, amount, included, context)
+    splits_suggestion = split_expense_with_context(description, amount, participants, context)
 
     # Fallback to equal split if Gemini returns invalid data
     if (
@@ -116,7 +118,11 @@ def add_shared_expense():
         ))
 
     db.session.commit()
-    return jsonify(message="Expense added", expense_id=expense.id), 201
+    return jsonify(
+        message="Expense added",
+        expense_id=expense.id,
+        splits=splits_suggestion  
+    ), 201
 
 @shared_bp.route('/expense/receipt', methods=['POST'])
 def upload_receipt():

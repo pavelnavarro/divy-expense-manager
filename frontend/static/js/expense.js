@@ -1,33 +1,45 @@
-// static/js/expense.js
-
 document.addEventListener('DOMContentLoaded', () => {
-    const typeSelect    = document.getElementById('type');
-    const sharedFields  = document.getElementById('sharedFields');
-    const groupSelect   = document.getElementById('group');
-    const excludeSelect = document.getElementById('exclude');
-    const form          = document.getElementById('expenseForm');
-  
-    // 1) Toggle shared-only fields
-    typeSelect.addEventListener('change', () => {
-      sharedFields.style.display = (typeSelect.value === 'shared') ? 'block' : 'none';
-    });
-  
-    // 2) Populate groups & exclude options
-    async function loadGroups() {
-      try {
-        const res = await fetch('/api/shared/groups');
-        const groups = await res.json();
+  const typeSelect           = document.getElementById('type');
+  const sharedSection        = document.getElementById('sharedSection');
+  const groupSelect          = document.getElementById('group');
+  const groupSection         = document.getElementById('groupSection');
+  const noGroupsAlert        = document.getElementById('noGroups');
+  const receiptGroup         = document.getElementById('receiptGroup');
+  const amountInput          = document.getElementById('amount');
+  const geminiResponseGroup  = document.getElementById('geminiResponseGroup');
+  const form                 = document.getElementById('expenseForm');
+
+  async function loadGroups() {
+    try {
+      const res = await fetch('/api/shared/groups');
+      const groups = await res.json();
+      groupSelect.innerHTML = ''; // clear
+      if (groups.length === 0) {
+        noGroupsAlert.style.display = 'block';
+        groupSection.style.display = 'none';
+      } else {
+        noGroupsAlert.style.display = 'none';
+        groupSection.style.display = 'block';
         groups.forEach(g => {
-          const opt1 = new Option(g.name, g.id);
-          groupSelect.add(opt1);
-          const opt2 = new Option(g.name, g.id);
-          excludeSelect.add(opt2);
+          const opt = new Option(g.name, g.id);
+          groupSelect.add(opt);
         });
-      } catch (err) {
-        console.error('Error loading groups', err);
       }
+    } catch (err) {
+      console.error('Failed to load groups', err);
     }
-    loadGroups();
+  }
+
+  function toggleTypeFields() {
+    const isShared = typeSelect.value === 'shared';
+    sharedSection.style.display        = isShared ? 'block' : 'none';
+    receiptGroup.style.display         = isShared ? 'block' : 'none';
+    amountInput.required               = !isShared;
+  }
+
+  typeSelect.addEventListener('change', toggleTypeFields);
+  toggleTypeFields();  // initial
+  loadGroups();
   
     // 3) Handle form submission
     form.addEventListener('submit', async e => {
@@ -56,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('description', description);
         formData.append('date', date);
         formData.append('recurring', recurring);
-        formData.append('notes', notes);
+        formData.append('context', notes);
         formData.append('group_id', groupSelect.value);
         Array.from(excludeSelect.selectedOptions).forEach(opt =>
           formData.append('exclude_members', opt.value)
@@ -71,7 +83,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = await fetch(url, options);
         const data = await res.json();
         if (res.ok) {
-          window.location.href = '/dashboard';
+          const data = await res.json();
+          const splits = data.splits;
+          
+          let output = '<h5>Suggested Split:</h5><ul>';
+          for (const [name, amt] of Object.entries(splits)) {
+            output += `<li>${name}: $${amt.toFixed(2)}</li>`;
+          }
+          output += '</ul>';
+
+          document.getElementById('resultMessage').innerHTML = output;
         } else {
           alert(data.error || 'Failed to submit expense');
         }

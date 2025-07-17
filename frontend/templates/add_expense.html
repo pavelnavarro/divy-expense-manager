@@ -1,57 +1,66 @@
+<!-- frontend/templates/add_expense.html -->
 {% extends "layout.html" %}
 {% block title %}Add Expense | Divy{% endblock %}
 
 {% block content %}
-  <h2>Add Expense</h2>
-  <form id="expenseForm" enctype="multipart/form-data">
-    <!-- 1. Type selector -->
+<h2>Add Expense</h2>
+<form id="expenseForm" enctype="multipart/form-data">
+  <!-- Type selector -->
+  <div class="form-group">
     <label for="type">Type</label>
-    <select id="type" name="type">
+    <select id="type" name="type" class="form-control" required>
       <option value="personal">Personal</option>
       <option value="shared">Shared</option>
     </select>
+  </div>
 
-    <!-- 2. Amount -->
+  <!-- Amount or Receipt (shared) -->
+  <div class="form-group" id="amountGroup">
     <label for="amount">Amount</label>
-    <input type="number" id="amount" name="amount" step="0.01" placeholder="0.00" required>
+    <input type="number" id="amount" name="amount" step="0.01" class="form-control" placeholder="0.00">
+  </div>
+  <div class="form-group" id="receiptGroup" style="display:none;">
+    <label for="receipt">Or upload receipt image</label>
+    <input type="file" id="receipt" name="receipt" accept="image/*" class="form-control-file">
+  </div>
 
-    <!-- 3. Description -->
+  <!-- Description -->
+  <div class="form-group">
     <label for="description">Description</label>
-    <input type="text" id="description" name="description" placeholder="What was this for?" required>
+    <input type="text" id="description" name="description" class="form-control" placeholder="What was this for?" required>
+  </div>
 
-    <!-- 4. Transaction Date -->
+  <!-- Transaction Date -->
+  <div class="form-group">
     <label for="date">Transaction Date</label>
-    <input type="date" id="date" name="date" required>
+    <input type="date" id="date" name="date" class="form-control" required>
+  </div>
 
-    <!-- 5. Is Recurring -->
-    <label>
-      <input type="checkbox" id="recurring" name="recurring">
-      Is Recurring
-    </label>
-
-    <!-- 6. Context / Notes -->
-    <label for="notes">Context / Notes</label>
-    <textarea id="notes" name="notes" placeholder="Any extra details or hints for AI"></textarea>
-
-    <!-- Shared‑only fields (hidden by default) -->
-    <div id="sharedFields" style="display:none;">
-      <!-- 7a. Group dropdown -->
-      <label for="group">Group</label>
-      <select id="group" name="group_id"></select>
-
-      <!-- 7b. Excluded members multi‑select -->
-      <label for="exclude">Exclude Members</label>
-      <select id="exclude" name="exclude_members" multiple></select>
-
-      <!-- 7c. Receipt image upload -->
-      <label for="receipt">Receipt Image (optional)</label>
-      <input type="file" id="receipt" name="receipt" accept="image/*">
+  <!-- Shared-only fields -->
+  <div id="sharedSection" style="display:none;">
+    <!-- No groups message -->
+    <div id="noGroups" class="alert alert-warning" style="display:none;">
+      You are not in any groups. Cannot add a shared expense.
     </div>
+    <!-- Group dropdown -->
+    <div id="groupSection" class="form-group" style="display:none;">
+      <label for="group">Group</label>
+      <select id="group" name="group_id" class="form-control"></select>
+    </div>
+    <!-- Context / Notes -->
+    <div class="form-group">
+      <label for="notes">Context / Notes (optional)</label>
+      <textarea id="notes" name="notes" class="form-control" placeholder="Extra details for AI (optional)"></textarea>
+    </div>
+  </div>
 
-    <!-- 8. Submit -->
-    <button type="submit">Submit</button>
-  </form>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
 
-  <!-- now just one script tag, all behavior lives in expense.js -->
-  <script src="{{ url_for('static', filename='js/expense.js') }}"></script>
+<!-- Result message -->
+<div id="resultMessage" class="mt-3"></div>
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/expense.js') }}"></script>
+{% endblock %}
 {% endblock %}
