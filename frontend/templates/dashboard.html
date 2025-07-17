@@ -1,7 +1,9 @@
+<!-- templates/dashboard.html -->
 {% extends "layout.html" %}
 {% block title %}Dashboard | Divy{% endblock %}
 
 {% block content %}
+<<<<<<< HEAD
   <h2>Dashboard</h2>
 
   <div class="card">
@@ -30,4 +32,59 @@
     </ul>
   </div>
   <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+=======
+  <!-- Welcome message -->
+  <h2>Welcome back, {{ username }}!</h2>
+
+  <!-- Summary cards -->
+  <section class="summary-cards">
+    <!-- Total personal expenses this month -->
+    <div class="card">
+      <h3>Total Personal Expenses (This Month)</h3>
+      <p>${{ personal_total }}</p>
+    </div>
+
+    <!-- Total amount owed / to collect in groups -->
+    <div class="card">
+      <h3>Group Balances</h3>
+      <p>
+        You owe: ${{ amount_owed }}<br>
+        Others owe you: ${{ amount_to_collect }}
+      </p>
+    </div>
+
+    <!-- "Add Expense" button -->
+    <div class="card">
+      <h3>Quick Actions</h3>
+      <a href="{{ url_for('frontend.add_expense') }}" class="btn">Add Expense</a>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- Group overview -->
+  <section class="group-overview">
+    <h3>Your Groups</h3>
+
+    {% if groups %}
+      <div class="group-list">
+        {% for group in groups %}
+          <div class="group-card">
+            <h4>{{ group.name }}</h4>
+            <p>Your Balance: ${{ group.balance }}</p>
+            <!-- Quick link to group balances/history -->
+            <a href="{{ url_for('frontend.balances', group_id=group.id) }}">
+              View Balances
+            </a>
+            <a href="{{ url_for('frontend.group_detail', group_id=group.id) }}">
+              View History
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>You’re not in any groups yet.</p>
+    {% endif %}
+  </section>
+>>>>>>> 44f131a0057b8fc2e40e4b3edb5722b7133fd42f
 {% endblock %}

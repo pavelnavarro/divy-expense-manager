@@ -2,6 +2,7 @@
 {% block title %}Register – Divy{% endblock %}
 {% block content %}
   <h2>Register</h2>
+<<<<<<< HEAD
   <form id="register-form">
     <label>Username <input name="username" /></label><br>
     <label>Email <input name="email" type="email" /></label><br>
@@ -28,4 +29,47 @@
       }
     };
   </script>
+=======
+
+  <!-- registration form; JS will handle the POST -->
+  <form id="registerForm">
+    <label for="username">Username</label>
+    <input
+      type="text"
+      id="username"
+      name="username"
+      placeholder="Choose a username"
+      required
+    >
+
+    <label for="email">Email</label>
+    <input
+      type="email"
+      id="email"
+      name="email"
+      placeholder="Enter your email"
+      required
+    >
+
+    <label for="password">Password</label>
+    <input
+      type="password"
+      id="password"
+      name="password"
+      placeholder="Create a password"
+      required
+    >
+
+    <button type="submit">Create Account</button>
+  </form>
+
+  <p>
+    Already have an account?
+    <a href="{{ url_for('frontend.login') }}">Sign in</a>
+  </p>
+</div>
+
+<!-- load the JS that will POST to /api/auth/register and redirect on success -->
+<script src="{{ url_for('static', filename='js/register.js') }}"></script>
+>>>>>>> 44f131a0057b8fc2e40e4b3edb5722b7133fd42f
 {% endblock %}
