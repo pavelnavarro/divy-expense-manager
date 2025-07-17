@@ -104,3 +104,9 @@ def group_detail(group_id):
 @frontend_bp.route('/logout', methods=['GET'])
 def logout_page():
     return redirect(url_for('frontend.login_page'))
+
+@frontend_bp.route('/groups', methods=['GET'])
+@jwt_required()
+def groups_page():
+    user_id = int(get_jwt_identity())
+    return render_template('groups.html', user_id=user_id)

@@ -1,6 +1,7 @@
 # backend/routes/shared_routes.py
 
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from backend.extensions import db
 from backend.models.shared import Group, SharedExpense, Split, Payment
 from backend.models.user import User
@@ -14,19 +15,25 @@ shared_bp = Blueprint('shared', __name__)
 #
 
 @shared_bp.route('/groups', methods=['POST'])
+@jwt_required()
 def create_group():
     """Create a new group with a list of member IDs."""
     data = request.get_json() or {}
-    name = data.get('name')
-    created_by = data.get('created_by')
+    name       = data.get('name')
     member_ids = data.get('members', [])
+    created_by = int(get_jwt_identity())
 
-    if not name or not created_by:
-        return jsonify(error="Missing group name or creator"), 400
-
+    if not name:
+        return jsonify(error="Missing group name"), 400
+    
     group = Group(name=name, created_by=created_by)
     db.session.add(group)
     db.session.flush()  # so group.id is available
+
+    # always include creator
+    creator = User.query.get(created_by)
+    if creator:
+       group.members.append(creator)
 
     users = User.query.filter(User.id.in_(member_ids)).all()
     group.members.extend(users)
@@ -52,6 +59,20 @@ def get_user_groups(user_id):
     } for g in groups]
 
     return jsonify(groups=result), 200
+
+@shared_bp.route('/groups', methods=['GET'])
+@jwt_required()
+def get_my_groups():
+    user_id = int(get_jwt_identity())
+    user = User.query.get_or_404(user_id)
+    groups = user.groups.all()
+    result = [{
+        "id": g.id,
+        "name": g.name,
+        "created_at": g.created_at.isoformat(),
+        "members": [{"id": u.id, "username": u.username} for u in g.members]
+    } for g in groups]
+    return jsonify(result), 200
 
 @shared_bp.route('/group/<int:group_id>', methods=['GET'])
 def get_group_info(group_id):
@@ -262,3 +283,8 @@ def get_group_balances(group_id):
 
     settlements = minimize_cash_flow(net.copy())
     return jsonify(net_balances=net, simplified_transactions=settlements), 200
+
+@shared_bp.route('/users', methods=['GET'])
+def list_users():
+    users = User.query.all()
+    return jsonify([{"id": u.id, "username": u.username} for u in users]), 200
