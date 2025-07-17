@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block title %}Groups | Divy{% endblock %}
+
+{% block content %}
+  <h2>Your Groups</h2>
+  <button id="createGroupBtn" class="btn">Create Group</button>
+
+  <div id="groupsList">
+    <!-- JS will render each group here -->
+  </div>
+
+  <!-- Create Group Modal -->
+  <div id="createGroupModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span id="closeGroupModal" class="close">&times;</span>
+      <h3>Create Group</h3>
+      <form id="createGroupForm">
+        <label for="groupName">Group Name</label>
+        <input type="text" id="groupName" name="name" required>
+
+        <label for="members">Members</label>
+        <select id="members" name="members" multiple required>
+          <!-- populated by JS -->
+        </select>
+
+        <button type="submit">Create</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/groups.js') }}"></script>
+{% endblock %}

@@ -4,18 +4,45 @@
 {% block content %}
 <div class="card">
   <h2>Register</h2>
-  <form action="{{ url_for('register') }}" method="POST">
+
+  <!-- registration form; JS will handle the POST -->
+  <form id="registerForm">
     <label for="username">Username</label>
-    <input type="text" id="username" name="username" placeholder="Choose a username" required>
+    <input
+      type="text"
+      id="username"
+      name="username"
+      placeholder="Choose a username"
+      required
+    >
 
     <label for="email">Email</label>
-    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+    <input
+      type="email"
+      id="email"
+      name="email"
+      placeholder="Enter your email"
+      required
+    >
 
     <label for="password">Password</label>
-    <input type="password" id="password" name="password" placeholder="Create a password" required>
+    <input
+      type="password"
+      id="password"
+      name="password"
+      placeholder="Create a password"
+      required
+    >
 
     <button type="submit">Create Account</button>
   </form>
-  <p>Already have an account? <a href="{{ url_for('login') }}">Sign in</a></p>
+
+  <p>
+    Already have an account?
+    <a href="{{ url_for('frontend.login') }}">Sign in</a>
+  </p>
 </div>
+
+<!-- load the JS that will POST to /api/auth/register and redirect on success -->
+<script src="{{ url_for('static', filename='js/register.js') }}"></script>
 {% endblock %}

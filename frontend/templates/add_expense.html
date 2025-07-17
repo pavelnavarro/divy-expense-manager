@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% block title %}Add Expense | Divy{% endblock %}
+
+{% block content %}
+  <h2>Add Expense</h2>
+  <form id="expenseForm" enctype="multipart/form-data">
+    <!-- 1. Type selector -->
+    <label for="type">Type</label>
+    <select id="type" name="type">
+      <option value="personal">Personal</option>
+      <option value="shared">Shared</option>
+    </select>
+
+    <!-- 2. Amount -->
+    <label for="amount">Amount</label>
+    <input type="number" id="amount" name="amount" step="0.01" placeholder="0.00" required>
+
+    <!-- 3. Description -->
+    <label for="description">Description</label>
+    <input type="text" id="description" name="description" placeholder="What was this for?" required>
+
+    <!-- 4. Transaction Date -->
+    <label for="date">Transaction Date</label>
+    <input type="date" id="date" name="date" required>
+
+    <!-- 5. Is Recurring -->
+    <label>
+      <input type="checkbox" id="recurring" name="recurring">
+      Is Recurring
+    </label>
+
+    <!-- 6. Context / Notes -->
+    <label for="notes">Context / Notes</label>
+    <textarea id="notes" name="notes" placeholder="Any extra details or hints for AI"></textarea>
+
+    <!-- Shared‑only fields (hidden by default) -->
+    <div id="sharedFields" style="display:none;">
+      <!-- 7a. Group dropdown -->
+      <label for="group">Group</label>
+      <select id="group" name="group_id"></select>
+
+      <!-- 7b. Excluded members multi‑select -->
+      <label for="exclude">Exclude Members</label>
+      <select id="exclude" name="exclude_members" multiple></select>
+
+      <!-- 7c. Receipt image upload -->
+      <label for="receipt">Receipt Image (optional)</label>
+      <input type="file" id="receipt" name="receipt" accept="image/*">
+    </div>
+
+    <!-- 8. Submit -->
+    <button type="submit">Submit</button>
+  </form>
+
+  <!-- now just one script tag, all behavior lives in expense.js -->
+  <script src="{{ url_for('static', filename='js/expense.js') }}"></script>
+{% endblock %}

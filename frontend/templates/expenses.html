@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block title %}Expenses | Divy{% endblock %}
+
+{% block content %}
+  <h2>All Expenses</h2>
+
+  <!-- Tabs -->
+  <nav class="tabs">
+    <button id="tabPersonal" class="tab-button active">Personal</button>
+    <button id="tabShared" class="tab-button">Shared</button>
+  </nav>
+
+  <!-- Date filter -->
+  <div class="filter">
+    <label for="filterDate">Filter by Date</label>
+    <input type="date" id="filterDate" name="filter_date">
+  </div>
+
+  <!-- Where we’ll render the list -->
+  <div id="expenseList">
+    <!-- JS will populate this -->
+  </div>
+
+  <!-- Expense page behavior -->
+  <script src="{{ url_for('static', filename='js/expenses.js') }}"></script>
+{% endblock %}

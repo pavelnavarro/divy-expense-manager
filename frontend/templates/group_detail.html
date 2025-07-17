@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+{% block title %}Group Details | Divy{% endblock %}
+
+{% block content %}
+  <!-- Group header -->
+  <h2 id="groupName">Loading…</h2>
+  <p>Created by: <span id="groupCreator">‑</span></p>
+
+  <!-- Members -->
+  <section>
+    <h3>Members</h3>
+    <ul id="memberList">
+      <!-- populated by JS -->
+    </ul>
+  </section>
+
+  <!-- Expenses table -->
+  <section>
+    <h3>Expenses</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Amount</th>
+          <th>Paid By</th>
+          <th>Notes</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="expensesTableBody">
+        <!-- populated by JS -->
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Payments table -->
+  <section>
+    <h3>Payments</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>From</th>
+          <th>To</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="paymentsTableBody">
+        <!-- populated by JS -->
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Actions -->
+  <div class="actions">
+    <a href="{{ url_for('frontend.add_expense') }}" class="btn">Add Shared Expense</a>
+    <button id="recordPaymentBtn" class="btn">Record Payment</button>
+  </div>
+
+  <!-- Record Payment Modal -->
+  <div id="paymentModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span id="closePaymentModal" class="close">&times;</span>
+      <h3>Record Payment</h3>
+      <form id="paymentForm">
+        <label for="fromUser">From</label>
+        <select id="fromUser" name="from_user" required></select>
+
+        <label for="toUser">To</label>
+        <select id="toUser" name="to_user" required></select>
+
+        <label for="paymentAmount">Amount</label>
+        <input type="number" id="paymentAmount" name="amount" step="0.01" required>
+
+        <label for="paymentDate">Date</label>
+        <input type="date" id="paymentDate" name="date" required>
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/group_detail.js') }}"></script>
+{% endblock %}
