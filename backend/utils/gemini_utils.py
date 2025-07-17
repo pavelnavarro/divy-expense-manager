@@ -2,6 +2,7 @@
 
 import os
 import json
+import re
 from dotenv import load_dotenv
 from google.generativeai import configure, GenerativeModel
 
@@ -51,21 +52,38 @@ Please respond in JSON with:
 def split_expense_with_context(
     description: str,
     amount: float,
-    participants: list,
+    participants: list[str],
     context_notes: str = "",
 ):
     """
     Ask Gemini how to split a shared expense.
-    participants should be a list of identifiers (e.g. user IDs or names).
-    Returns either a dict mapping each participant → amount owed,
-    or on failure the raw text response.
-    """
-    if not _MODEL:
-        # fallback: equal split
-        share = round(amount / len(participants), 2) if participants else 0
-        return {p: share for p in participants}
 
-    members_csv = ", ".join(map(str, participants))
+    `participants` is a list of usernames (e.g. ['daniel', 'ana', 'luis'])
+    Returns a dict: {username → amount_owed}
+    """
+
+    # Detect exclusions like: "Exclude Daniel", "excluding ana"
+    excluded = []
+    lowered_context = context_notes.lower()
+    for name in participants:
+        # detect if the name appears near 'exclude', 'excluding', 'except', etc.
+        pattern = rf"\b(exclude|excluding|except)\b[^.]*\b{name.lower()}\b"
+        if re.search(pattern, lowered_context):
+            excluded.append(name)
+
+    # Keep only those not mentioned as excluded
+    included = [p for p in participants if p not in excluded]
+
+    if not included:
+        return {"error": "All participants were excluded or none found."}
+
+    # fallback (if Gemini disabled)
+    if not _MODEL:
+        share = round(amount / len(included), 2)
+        return {p: share for p in included}
+
+    # Build prompt
+    members_csv = ", ".join(included)
     prompt = f"""
 You are helping divide a shared expense of ${amount:.2f}.
 
@@ -74,14 +92,14 @@ Participants: {members_csv}
 Context: {context_notes or 'None'}
 
 Please respond in JSON with a map of each participant to what they owe, e.g.:
-{{"alice": 12.5, "bob": 12.5, ...}}
+{{"alice": 12.5, "bob": 12.5}}
 """
-    try:
-        resp = _MODEL.generate_content(prompt).text
-        return json.loads(resp)
-    except Exception:
-        return {"raw": resp}
 
+    try:
+        response_text = _MODEL.generate_content(prompt).text
+        return json.loads(response_text)
+    except Exception:
+        return {"raw": response_text}
 
 def extract_from_receipt(image_data_bytes: bytes, context_notes: str = ""):
     """
