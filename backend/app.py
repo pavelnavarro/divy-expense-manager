@@ -13,13 +13,24 @@ from backend.routes.auth_routes      import auth_bp
 from backend.routes.personal_routes  import personal_bp
 from backend.routes.shared_routes    import shared_bp
 from backend.routes.calendar_routes  import calendar_bp
+from backend.routes.frontend_routes  import frontend_bp
 
 
 
 def create_app():
 
-    # 2) create app and load config
-    app = Flask(__name__)
+    # figure out where this file lives: <divy>/backend/
+    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+    # build absolute paths to frontend/templates and /static
+    TEMPLATE_DIR = os.path.join(BASE_DIR, '..', 'frontend', 'templates')
+    STATIC_DIR   = os.path.join(BASE_DIR, '..', 'frontend', 'static')
+
+    app = Flask(
+      __name__,
+      template_folder=TEMPLATE_DIR,
+      static_folder=STATIC_DIR
+    )
     app.config.from_object(Config)
 
     # 3) init extensions
@@ -33,6 +44,7 @@ def create_app():
     app.register_blueprint(personal_bp,  url_prefix='/api/personal')
     app.register_blueprint(shared_bp,    url_prefix='/api/shared')
     app.register_blueprint(calendar_bp,  url_prefix='/api/calendar')
+    app.register_blueprint(frontend_bp)
 
     return app
 
