@@ -5,9 +5,7 @@
   <h2>Your Groups</h2>
   <button id="createGroupBtn" class="btn">Create Group</button>
 
-  <div id="groupsList">
-    <!-- JS will render each group here -->
-  </div>
+  <div id="groupsList"></div>
 
   <!-- Create Group Modal -->
   <div id="createGroupModal" class="modal" style="display:none;">
@@ -18,15 +16,17 @@
         <label for="groupName">Group Name</label>
         <input type="text" id="groupName" name="name" required>
 
-        <label for="members">Members</label>
-        <select id="members" name="members" multiple required>
-          <!-- populated by JS -->
-        </select>
-
+        <div id="memberFields"><!-- rows go here --></div>
+        <button type="button" id="addMemberBtn">+ Add Member</button>
         <button type="submit">Create</button>
       </form>
     </div>
   </div>
+{% endblock %}
 
+{% block scripts %}
+  <script>
+    const CURRENT_USER_ID = {{ user_id | tojson }};
+  </script>
   <script src="{{ url_for('static', filename='js/groups.js') }}"></script>
 {% endblock %}

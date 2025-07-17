@@ -13,6 +13,7 @@
     {% if request.cookies.get('access_token') %}
     <nav>
       <a href="{{ url_for('frontend.dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('frontend.groups_page') }}">Groups</a>
       <a href="#" id="logout-link">Log Out</a>
     </nav>
     {% else %}
