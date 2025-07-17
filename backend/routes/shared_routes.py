@@ -70,6 +70,7 @@ def get_my_groups():
         "id": g.id,
         "name": g.name,
         "created_at": g.created_at.isoformat(),
+        "created_by": g.created_by,
         "members": [{"id": u.id, "username": u.username} for u in g.members]
     } for g in groups]
     return jsonify(result), 200
@@ -288,3 +289,17 @@ def get_group_balances(group_id):
 def list_users():
     users = User.query.all()
     return jsonify([{"id": u.id, "username": u.username} for u in users]), 200
+
+@shared_bp.route('/groups/<int:group_id>', methods=['DELETE'])
+@jwt_required()
+def delete_group(group_id):
+    user_id = int(get_jwt_identity())
+    group = Group.query.get_or_404(group_id)
+
+    # Solo el creador puede eliminar
+    if group.created_by != user_id:
+        return jsonify(error="Not authorized"), 403
+
+    db.session.delete(group)
+    db.session.commit()
+    return jsonify(message="Group deleted"), 200

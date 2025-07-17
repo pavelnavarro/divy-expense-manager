@@ -116,6 +116,33 @@ async function loadGroups() {
         <p>Created at: ${new Date(group.created_at).toLocaleString()}</p>
         <p>Members: ${group.members.map(m => m.username).join(', ')}</p>
       `;
+      if (group.created_by === CURRENT_USER_ID) {
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.addEventListener('click', async () => {
+          if (confirm(`Are you sure you want to delete ${group.name}?`)) {
+            try {
+              const res = await fetch(`/api/shared/groups/${group.id}`, {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                }
+              });
+              if (res.ok) {
+                await loadGroups();  // recarga lista
+              } else {
+                const err = await res.json();
+                alert(err.error || 'Failed to delete group');
+              }
+            } catch (err) {
+              console.error('Delete error:', err);
+              alert('Error deleting group');
+            }
+          }
+        });
+        div.appendChild(deleteBtn);
+      }
+
       container.appendChild(div);
     });
   } catch (err) {
