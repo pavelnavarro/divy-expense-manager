@@ -1,9 +1,33 @@
 {% extends "layout.html" %}
 {% block title %}Dashboard | Divy{% endblock %}
+
 {% block content %}
-<h2>Dashboard</h2>
-<div class="card"><h3>Personal Spending</h3><p>$1,250</p></div>
-<div class="card"><h3>Shared Balances</h3><p>$320</p></div>
-<div class="card"><h3>Budget Status</h3><p>Under budget</p></div>
-<div class="card"><h3>Recent Expenses</h3><ul><li>Groceries – $45</li><li>Rent – $500</li></ul></div>
+  <h2>Dashboard</h2>
+
+  <div class="card">
+    <h3>Personal Spending</h3>
+    <p>${{ '%.2f'|format(personal_total) }}</p>
+  </div>
+
+  <div class="card">
+    <h3>Shared Balances</h3>
+    <p>${{ '%.2f'|format(shared_balance) }}</p>
+  </div>
+
+  <div class="card">
+    <h3>Budget Status</h3>
+    <p>{{ budget_status }}</p>
+  </div>
+
+  <div class="card">
+    <h3>Recent Expenses</h3>
+    <ul>
+      {% for exp in recent_exps %}
+        <li>{{ exp.description }} – ${{ '%.2f'|format(exp.amount) }}</li>
+      {% else %}
+        <li>No recent expenses</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 {% endblock %}

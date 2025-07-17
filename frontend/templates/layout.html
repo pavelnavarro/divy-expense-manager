@@ -10,12 +10,15 @@
   <header>
     <h1>Divy</h1>
     <nav>
-      <a href="{{ url_for('dashboard') }}">Dashboard</a>
-      <a href="{{ url_for('personal_expenses') }}">Personal</a>
-      <a href="{{ url_for('shared_expenses') }}">Shared</a>
-      <a href="{{ url_for('payment_center') }}">Payments</a>
-      <a href="{{ url_for('analytics') }}">Insights</a>
-      <a href="{{ url_for('settings') }}">Settings</a>
+      <a href="{{ url_for('frontend.dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('frontend.personal_expenses') }}">Personal</a>
+      <a href="{{ url_for('frontend.shared_expenses') }}">Shared</a>
+      <a href="{{ url_for('frontend.payment_center') }}">Payments</a>
+      <a href="{{ url_for('frontend.analytics') }}">Insights</a>
+      <a href="{{ url_for('frontend.settings') }}">Settings</a>
+      <a href="{{ url_for('frontend.login_page') }}">Log in</a>
+      <a href="{{ url_for('frontend.register_page') }}">Register</a>
+      <a href="{{ url_for('frontend.logout_page') }}">Log out</a>
     </nav>
     <hr>
   </header>
@@ -28,5 +31,13 @@
     <hr>
     <p>&copy; 2025 Divy</p>
   </footer>
+  <script>
+    document.querySelector('a[href="/logout"]').onclick = ev => {
+      ev.preventDefault();
+      localStorage.removeItem('divy_token');
+      window.location.href = '/login';
+    };
+  </script>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

@@ -1,21 +1,31 @@
 {% extends "layout.html" %}
-{% block title %}Register | Divy{% endblock %}
-
+{% block title %}Register – Divy{% endblock %}
 {% block content %}
-<div class="card">
   <h2>Register</h2>
-  <form action="{{ url_for('register') }}" method="POST">
-    <label for="username">Username</label>
-    <input type="text" id="username" name="username" placeholder="Choose a username" required>
-
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" placeholder="Enter your email" required>
-
-    <label for="password">Password</label>
-    <input type="password" id="password" name="password" placeholder="Create a password" required>
-
-    <button type="submit">Create Account</button>
+  <form id="register-form">
+    <label>Username <input name="username" /></label><br>
+    <label>Email <input name="email" type="email" /></label><br>
+    <label>Password <input name="password" type="password" /></label><br>
+    <button type="submit">Register</button>
   </form>
-  <p>Already have an account? <a href="{{ url_for('login') }}">Sign in</a></p>
-</div>
+  <script>
+    document.getElementById('register-form').onsubmit = async e => {
+      e.preventDefault();
+      const data = {
+        username: e.target.username.value,
+        email:    e.target.email.value,
+        password: e.target.password.value
+      };
+      const resp = await fetch('/api/auth/register', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(data)
+      });
+      if (resp.ok) {
+        alert('Registered! Please log in.');
+        location.href = '/login';
+      } else {
+        alert('Registration failed');
+      }
+    };
+  </script>
 {% endblock %}

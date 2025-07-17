@@ -20,9 +20,15 @@ class Config:
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # JWT
+    # JWT in cookies
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'change-jwt-secret')
-    # Store hours in ENV as integer; default 24
+    JWT_TOKEN_LOCATION      = ['cookies']
+    JWT_ACCESS_COOKIE_NAME = 'access_token'
+    JWT_COOKIE_SECURE = False        # True in production (requires HTTPS)
+    JWT_COOKIE_SAMESITE = 'Lax'
+    JWT_COOKIE_CSRF_PROTECT = False  # Enable if you add CSRF tokens
+
+    # Token expiration
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(
         hours=int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES_HOURS', '24'))
     )
@@ -35,7 +41,6 @@ class Config:
     GOOGLE_CALENDAR_CLIENT_SECRET = os.getenv('GOOGLE_CALENDAR_CLIENT_SECRET')
 
     # CORS
-    # Comma‑separated list of allowed origins in ENV
     CORS_ORIGINS = os.getenv(
         'CORS_ORIGINS',
         'http://localhost:3000,http://127.0.0.1:3000'
