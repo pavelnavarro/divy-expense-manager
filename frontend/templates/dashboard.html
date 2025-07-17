@@ -1,38 +1,8 @@
-<!-- templates/dashboard.html -->
+<!-- frontend/templates/dashboard.html -->
 {% extends "layout.html" %}
 {% block title %}Dashboard | Divy{% endblock %}
 
 {% block content %}
-<<<<<<< HEAD
-  <h2>Dashboard</h2>
-
-  <div class="card">
-    <h3>Personal Spending</h3>
-    <p>${{ '%.2f'|format(personal_total) }}</p>
-  </div>
-
-  <div class="card">
-    <h3>Shared Balances</h3>
-    <p>${{ '%.2f'|format(shared_balance) }}</p>
-  </div>
-
-  <div class="card">
-    <h3>Budget Status</h3>
-    <p>{{ budget_status }}</p>
-  </div>
-
-  <div class="card">
-    <h3>Recent Expenses</h3>
-    <ul>
-      {% for exp in recent_exps %}
-        <li>{{ exp.description }} – ${{ '%.2f'|format(exp.amount) }}</li>
-      {% else %}
-        <li>No recent expenses</li>
-      {% endfor %}
-    </ul>
-  </div>
-  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
-=======
   <!-- Welcome message -->
   <h2>Welcome back, {{ username }}!</h2>
 
@@ -44,19 +14,16 @@
       <p>${{ personal_total }}</p>
     </div>
 
-    <!-- Total amount owed / to collect in groups -->
+    <!-- Shared balance summary -->
     <div class="card">
-      <h3>Group Balances</h3>
-      <p>
-        You owe: ${{ amount_owed }}<br>
-        Others owe you: ${{ amount_to_collect }}
-      </p>
+      <h3>Shared Balance</h3>
+      <p>${{ shared_balance }}</p>
     </div>
 
     <!-- "Add Expense" button -->
     <div class="card">
       <h3>Quick Actions</h3>
-      <a href="{{ url_for('frontend.add_expense') }}" class="btn">Add Expense</a>
+      <a href="{{ url_for('frontend.add_expense_page') }}" class="btn">Add Expense</a>
     </div>
   </section>
 
@@ -71,14 +38,8 @@
         {% for group in groups %}
           <div class="group-card">
             <h4>{{ group.name }}</h4>
-            <p>Your Balance: ${{ group.balance }}</p>
-            <!-- Quick link to group balances/history -->
-            <a href="{{ url_for('frontend.balances', group_id=group.id) }}">
-              View Balances
-            </a>
-            <a href="{{ url_for('frontend.group_detail', group_id=group.id) }}">
-              View History
-            </a>
+            <!-- Quick link to group history -->
+            <a href="{{ url_for('frontend.group_detail', group_id=group.id) }}">View History</a>
           </div>
         {% endfor %}
       </div>
@@ -86,5 +47,4 @@
       <p>You’re not in any groups yet.</p>
     {% endif %}
   </section>
->>>>>>> 44f131a0057b8fc2e40e4b3edb5722b7133fd42f
 {% endblock %}

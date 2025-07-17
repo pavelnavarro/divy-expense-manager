@@ -2,9 +2,9 @@
 
 from flask import Blueprint, render_template, redirect, url_for
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from backend.models.user import User
 from backend.models.personal import PersonalExpense, BudgetCategory
 from backend.models.shared import Group, SharedExpense, Split
-from backend.extensions import db
 from backend.utils.split_logic import calculate_balances_from_splits
 from datetime import datetime
 
@@ -12,20 +12,35 @@ frontend_bp = Blueprint('frontend', __name__)
 
 @frontend_bp.route('/')
 def index():
-    # If logged in, go to dashboard; otherwise to login
-    return redirect(url_for('frontend.dashboard'))
+    # Redirect to dashboard or login
+    try:
+        # If JWT present, go to dashboard
+        _ = get_jwt_identity()
+        return redirect(url_for('frontend.dashboard'))
+    except:
+        return redirect(url_for('frontend.login_page'))
 
-@frontend_bp.route('/dashboard')
+@frontend_bp.route('/login', methods=['GET'])
+def login_page():
+    return render_template('login.html'), 200
+
+@frontend_bp.route('/register', methods=['GET'])
+def register_page():
+    return render_template('register.html'), 200
+
+@frontend_bp.route('/dashboard', methods=['GET'])
 @jwt_required()
 def dashboard():
     user_id = int(get_jwt_identity())
+    user = User.query.get(user_id)
+    username = user.username if user else 'User'
 
     # Personal total spent this month
-    since = datetime(datetime.utcnow().year, datetime.utcnow().month, 1)
+    month_start = datetime.utcnow().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     personal_exps = (
         PersonalExpense.query
         .filter_by(user_id=user_id)
-        .filter(PersonalExpense.transaction_date >= since)
+        .filter(PersonalExpense.transaction_date >= month_start)
         .all()
     )
     personal_total = sum(e.amount for e in personal_exps)
@@ -56,48 +71,34 @@ def dashboard():
 
     return render_template(
         'dashboard.html',
+        username=username,
         personal_total=personal_total,
         shared_balance=shared_balance,
         budget_status=budget_status,
-        recent_exps=recent_exps
+        recent_exps=recent_exps,
+        groups=groups
     )
-@frontend_bp.route('/personal')
+
+@frontend_bp.route('/expenses', methods=['GET'])
 @jwt_required()
 def personal_expenses():
-    # The page will fetch via JS from /api/personal/expenses
-    return render_template('personal_expenses.html')
+    return render_template('expenses.html'), 200
 
-@frontend_bp.route('/shared')
+@frontend_bp.route('/add-expense', methods=['GET'])
+@jwt_required()
+def add_expense_page():
+    return render_template('add_expense.html'), 200
+
+@frontend_bp.route('/shared', methods=['GET'])
 @jwt_required()
 def shared_expenses():
-    # The page will fetch via JS from /api/shared/groups etc.
-    return render_template('shared_expenses.html')
+    return render_template('shared_expenses.html'), 200
 
-@frontend_bp.route('/payment-center')
+@frontend_bp.route('/group/<int:group_id>', methods=['GET'])
 @jwt_required()
-def payment_center():
-    return render_template('payment_center.html')
-
-@frontend_bp.route('/analytics')
-@jwt_required()
-def analytics():
-    return render_template('analytics.html')
-
-@frontend_bp.route('/settings')
-@jwt_required()
-def settings():
-    return render_template('settings.html')
-
-@frontend_bp.route('/login', methods=['GET'])
-def login_page():
-    return render_template('login.html'), 200
-
-@frontend_bp.route('/register', methods=['GET'])
-def register_page():
-    return render_template('register.html'), 200
+def group_detail(group_id):
+    return render_template('group_detail.html', group_id=group_id), 200
 
 @frontend_bp.route('/logout', methods=['GET'])
 def logout_page():
-    # we’re using JWT in the client, so logout is simply clearing the token in JS
-    # we’ll just redirect to login.html and let the client-side script wipe any stored token
     return redirect(url_for('frontend.login_page'))

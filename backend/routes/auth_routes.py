@@ -21,11 +21,9 @@ def register():
     if not all([username, email, password]):
         return jsonify(error="Missing fields"), 400
 
-    # Check for existing user or email
     if User.query.filter((User.username == username) | (User.email == email)).first():
         return jsonify(error="Username or email already exists"), 409
 
-    # Create & save new user
     user = User(username=username, email=email)
     user.set_password(password)
     db.session.add(user)
@@ -36,22 +34,25 @@ def register():
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json() or {}
-    username = data.get('username')
+    identifier = data.get('username')  # aquí llega lo que el usuario ingresó (puede ser username o email)
     password = data.get('password')
 
-    user = User.query.filter_by(username=username).first()
-    if not user or not bcrypt.check_password_hash(user.password, password):
+    # Permitimos login por username O por email
+    user = User.query.filter(
+        (User.username == identifier) | (User.email == identifier)
+    ).first()
+
+    if not user or not user.check_password(password):
         return jsonify(error="Invalid credentials"), 401
 
-    # create JWT
     access_token = create_access_token(identity=str(user.id))
-    # respond and set cookie
     resp = make_response(jsonify(message="Login successful"), 200)
     resp.set_cookie(
         'access_token',
         access_token,
+        path='/',       # se enviará la cookie en todas las rutas
         httponly=True,
-        secure=False,      # True in production
+        secure=False,   # en producción: True
         samesite='Lax'
     )
     return resp
