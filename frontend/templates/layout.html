@@ -1,50 +1,28 @@
+<!-- frontend/templates/layout.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% block title %}Divy{% endblock %}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">  
 </head>
 <body>
   <header>
     <h1>Divy</h1>
-<<<<<<< HEAD
+    {% if request.cookies.get('access_token') %}
     <nav>
       <a href="{{ url_for('frontend.dashboard') }}">Dashboard</a>
-      <a href="{{ url_for('frontend.personal_expenses') }}">Personal</a>
-      <a href="{{ url_for('frontend.shared_expenses') }}">Shared</a>
-      <a href="{{ url_for('frontend.payment_center') }}">Payments</a>
-      <a href="{{ url_for('frontend.analytics') }}">Insights</a>
-      <a href="{{ url_for('frontend.settings') }}">Settings</a>
-      <a href="{{ url_for('frontend.login_page') }}">Log in</a>
-      <a href="{{ url_for('frontend.register_page') }}">Register</a>
-      <a href="{{ url_for('frontend.logout_page') }}">Log out</a>
+      <a href="#" id="logout-link">Log Out</a>
     </nav>
-=======
-  
-    {% if is_authenticated %}
-      <!-- full app nav for logged‑in users -->
-      <nav>
-        <a href="{{ url_for('frontend.dashboard') }}">Dashboard</a>
-        <a href="{{ url_for('frontend.personal_expenses') }}">Personal</a>
-        <a href="{{ url_for('frontend.shared_expenses') }}">Shared</a>
-        <a href="{{ url_for('frontend.payment_center') }}">Payments</a>
-        <a href="{{ url_for('frontend.analytics') }}">Insights</a>
-        <a href="{{ url_for('frontend.settings') }}">Settings</a>
-        <a href="{{ url_for('frontend.logout') }}">Log Out</a>
-      </nav>
     {% else %}
-      <!-- simple nav for guests -->
-      <nav>
-        <a href="{{ url_for('frontend.login') }}">Sign In</a>
-        <a href="{{ url_for('frontend.register') }}">Register</a>
-      </nav>
+    <nav>
+      <a href="{{ url_for('frontend.login_page') }}">Sign In</a>
+      <a href="{{ url_for('frontend.register_page') }}">Register</a>
+    </nav>
     {% endif %}
-  
->>>>>>> 44f131a0057b8fc2e40e4b3edb5722b7133fd42f
     <hr>
-  </header>  
+  </header>
 
   <main class="main-content">
     {% block content %}{% endblock %}
@@ -54,12 +32,13 @@
     <hr>
     <p>&copy; 2025 Divy</p>
   </footer>
+
   <script>
-    document.querySelector('a[href="/logout"]').onclick = ev => {
+    document.getElementById('logout-link')?.addEventListener('click', ev => {
       ev.preventDefault();
-      localStorage.removeItem('divy_token');
+      document.cookie = 'access_token=; Max-Age=0; path=/';
       window.location.href = '/login';
-    };
+    });
   </script>
   {% block scripts %}{% endblock %}
 </body>

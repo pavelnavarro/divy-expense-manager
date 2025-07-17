@@ -1,75 +1,19 @@
 {% extends "layout.html" %}
 {% block title %}Register – Divy{% endblock %}
+
 {% block content %}
+<div class="card">
   <h2>Register</h2>
-<<<<<<< HEAD
+
   <form id="register-form">
-    <label>Username <input name="username" /></label><br>
-    <label>Email <input name="email" type="email" /></label><br>
-    <label>Password <input name="password" type="password" /></label><br>
+    <label>Username <input name="username" required /></label><br>
+    <label>Email <input name="email" type="email" required /></label><br>
+    <label>Password <input name="password" type="password" required /></label><br>
     <button type="submit">Register</button>
   </form>
-  <script>
-    document.getElementById('register-form').onsubmit = async e => {
-      e.preventDefault();
-      const data = {
-        username: e.target.username.value,
-        email:    e.target.email.value,
-        password: e.target.password.value
-      };
-      const resp = await fetch('/api/auth/register', {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(data)
-      });
-      if (resp.ok) {
-        alert('Registered! Please log in.');
-        location.href = '/login';
-      } else {
-        alert('Registration failed');
-      }
-    };
-  </script>
-=======
 
-  <!-- registration form; JS will handle the POST -->
-  <form id="registerForm">
-    <label for="username">Username</label>
-    <input
-      type="text"
-      id="username"
-      name="username"
-      placeholder="Choose a username"
-      required
-    >
-
-    <label for="email">Email</label>
-    <input
-      type="email"
-      id="email"
-      name="email"
-      placeholder="Enter your email"
-      required
-    >
-
-    <label for="password">Password</label>
-    <input
-      type="password"
-      id="password"
-      name="password"
-      placeholder="Create a password"
-      required
-    >
-
-    <button type="submit">Create Account</button>
-  </form>
-
-  <p>
-    Already have an account?
-    <a href="{{ url_for('frontend.login') }}">Sign in</a>
-  </p>
+  <p>Already have an account? <a href="{{ url_for('frontend.login_page') }}">Sign In</a></p>
 </div>
 
-<!-- load the JS that will POST to /api/auth/register and redirect on success -->
 <script src="{{ url_for('static', filename='js/register.js') }}"></script>
->>>>>>> 44f131a0057b8fc2e40e4b3edb5722b7133fd42f
 {% endblock %}
