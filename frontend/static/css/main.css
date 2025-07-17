@@ -1,0 +1,275 @@
+h1, h2, h3 {
+  font-weight: bold;
+  font-size: 2em;
+  text-align: left;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+h4 {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 1.5em;
+  text-align: center;
+  color: rgb(41, 41, 41);
+}
+
+p {
+  font-size: 1.2em;
+  line-height: 1.5;
+  color: #333;
+  font-family: 'Times New Roman', Times, serif;
+  text-align: center;
+}
+
+
+li {
+  border: 1px solid rgb(183, 181, 181);
+  border-radius: 8px;
+  text-align: center;
+  list-style: none;
+  color: black;
+  padding: 1rem;
+  height: 200px;
+  width: 300px;;
+  justify-content: center;
+  gap: 2rem;
+}
+
+ul {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem; 
+  justify-content: center; 
+  padding: 0;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;  
+  justify-content: center; 
+  text-align: center;    
+  padding: 1rem;
+}
+
+
+/* Shared button styles */
+.btn {
+  display: inline-block;
+  padding: 0.5rem 1.25rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  border: 2px solid transparent;
+  margin: 0 0.5rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Dark gray button with white text */
+.btn-dark {
+  background-color: #333;
+  color: white;
+  border-color: #333;
+}
+
+.btn-dark:hover {
+  background-color: #111;
+  border-color: #111;
+}
+
+/* White button with dark text */
+.btn-light {
+  background-color: white;
+  color: #333;
+  border: 2px solid #ccc;
+}
+
+.btn-light:hover {
+  background-color: #f2f2f2;
+}
+
+
+nav {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 1.5rem;
+  justify-content: flex-end;
+  padding: 1rem;
+}
+
+nav a {
+  color: black;
+  font-weight: bold;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+nav a:hover {
+  text-decoration: underline;
+  color: #e0e0e0; /* light gray on hover */
+}
+
+header {
+  background-color: #f8f8f8; /* light gray background */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+}
+
+/* Login page */
+.sign-card {
+  max-width: 400px;
+  margin: 5rem auto;
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  font-family: sans-serif;
+}
+
+/* Heading style */
+.sign-card h2 {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+/* Label style */
+.sign-card label {
+  display: block;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  margin-top: 1rem;
+}
+
+/* Input fields */
+.sign-card input {
+  width: 100%;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 0.5rem;
+  box-sizing: border-box;
+}
+
+.sign-card input:focus {
+  border-color: #888;
+  outline: none;
+}
+
+/* Submit button */
+.sign-card button {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin-top: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.sign-card button:hover {
+  background-color: #111;
+}
+
+/* Bottom link */
+.sign-card p {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.sign-card a {
+  color: #333;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+
+.register-card {
+  max-width: 400px;
+  margin: 5rem auto;
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  font-family: sans-serif;
+}
+
+.register-card h2 {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.register-card label {
+  display: block;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin: 1rem 0 0.25rem;
+}
+
+.register-card input {
+  width: 100%;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.register-card input:focus {
+  border-color: #888;
+  outline: none;
+}
+
+.register-card button {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin-top: 1.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.register-card button:hover {
+  background-color: #111;
+}
+
+.register-card p {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.register-card a {
+  color: #333;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.logo-link {
+  color: inherit;
+  text-decoration: none;
+}
+

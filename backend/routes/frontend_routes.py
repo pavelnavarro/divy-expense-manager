@@ -7,18 +7,20 @@ from backend.models.personal import PersonalExpense, BudgetCategory
 from backend.models.shared import Group, SharedExpense, Split
 from backend.utils.split_logic import calculate_balances_from_splits
 from datetime import datetime
+from flask_jwt_extended import (jwt_required, get_jwt_identity, verify_jwt_in_request)
 
 frontend_bp = Blueprint('frontend', __name__)
 
 @frontend_bp.route('/')
 def index():
-    # Redirect to dashboard or login
-    try:
-        # If JWT present, go to dashboard
-        _ = get_jwt_identity()
+    verify_jwt_in_request(optional=True)
+    uid = get_jwt_identity()
+
+    if uid:                          # user already logged in
         return redirect(url_for('frontend.dashboard'))
-    except:
-        return redirect(url_for('frontend.login_page'))
+
+    # no token ⇒ show public landing page
+    return render_template('index.html'), 200
 
 @frontend_bp.route('/login', methods=['GET'])
 def login_page():

@@ -3,24 +3,33 @@
 
 {% block content %}
 <section class="card">
-  <h2>Welcome to Divy 🎯</h2>
-  <p>Track personal and shared expenses, manage payments, and gain insights into your budget — all in one place.</p>
+  <h3> Track Your Expenses Effortly with Divy </h3>
+  <p> Manage both personal and shared expenses with intuitive tracking 
+    <br> and smart insights into your spending patterns. </p>
 </section>
 
-<section class="card">
-  <h3>Features</h3>
-  <ul>
-    <li>📊 Visualize your spending</li>
-    <li>👥 Track shared expenses with friends or roommates</li>
-    <li>💸 View pending payments and past transactions</li>
-    <li>🔔 Set budget alerts and preferences</li>
+<section class="sign-in-card">
+  <p>
+    <a href="{{ url_for('frontend.login_page') }}" class="btn btn-dark">Get Started</a>
+    <a href="{{ url_for('frontend.register_page') }}" class="btn btn-light">Sign In</a>
+  </p>
+</section>
+
+<section class="info-card">
+  <ul class="info-list">
+    <li>
+      <h4>Personal Expenses</h4>
+      Track your individual spending across all categories with detailed insights and reports.
+    </li>
+    <li>
+      <h4>Shared Expenses</h4>
+      Split bills and shared costs with friends, family, or roommates seamlessly.
+    </li>
+    <li>
+      <h4>Smart Insights</h4>
+      Get intelligent analysis of your spending patterns and personalized recommendations.
+    </li>
   </ul>
 </section>
 
-<section class="card">
-  <p>
-    <a href="{{ url_for('frontend.login_page') }}">Sign In</a> or
-    <a href="{{ url_for('frontend.register_page') }}">Create an Account</a>
-  </p>
-</section>
 {% endblock %}
