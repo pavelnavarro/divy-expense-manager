@@ -128,3 +128,4 @@ def extract_from_receipt(image_data_bytes: bytes, context_notes: str = ""):
         return json.loads(resp)
     except Exception:
         return resp
+

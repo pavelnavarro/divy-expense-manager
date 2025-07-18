@@ -25,7 +25,10 @@
 
 <div class="actions mt-3">
   <a href="{{ url_for('frontend.add_expense_page') }}" class="btn btn-primary">Add Shared Expense</a>
+  <button id="suggestPaymentsBtn" class="btn btn-info">Suggest Payments</button>
 </div>
+
+<div id="geminiSuggestions" class="mt-4"></div>
 {% endblock %}
 
 {% block scripts %}
@@ -36,7 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const groupCreatorEl  = document.getElementById('groupCreator');
   const memberList      = document.getElementById('memberList');
   const balancesBody    = document.getElementById('balancesTableBody');
+  const suggestBtn      = document.getElementById('suggestPaymentsBtn');
+  const suggestionsDiv  = document.getElementById('geminiSuggestions');
+
   let groupMembers = [];
+  let netBalances = {};
 
   async function loadGroup() {
     const res = await fetch(`/api/shared/group/${groupId}`);
@@ -56,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadBalances() {
     const res = await fetch(`/api/shared/group/${groupId}/balances`);
     const { net_balances } = await res.json();
+    netBalances = net_balances;
 
     balancesBody.innerHTML = '';
     for (const [uid, amount] of Object.entries(net_balances)) {
@@ -74,6 +82,37 @@ document.addEventListener('DOMContentLoaded', () => {
       balancesBody.appendChild(tr);
     }
   }
+
+  suggestBtn.addEventListener('click', async () => {
+    const balanceList = Object.entries(netBalances).map(([uid, amount]) => {
+      const user = groupMembers.find(u => u.id == uid);
+      return `${user?.username || uid}: ${amount >= 0 ? '+' : ''}${amount.toFixed(2)}`;
+    }).join('\n');
+    const prompt = `
+You are a helpful and witty assistant.
+
+These are the final net balances of a shared expense group:
+
+${balanceList}
+
+Please:
+1. Suggest the minimal number of payments needed to settle all debts.
+2. Write one short, polite and funny comment about the situation. Just one sentence, for example:
+   "Looks like Coco's picking up the next round!" or "At least we know who’s skipping dessert next time."
+3. Do not include the heather of Funny comment, just say it
+
+Keep the response clear and human-readable.
+`.trim();
+
+    suggestionsDiv.innerHTML = 'Loading Gemini suggestions…';
+    const res = await fetch('/api/gemini/payments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    const data = await res.json();
+    suggestionsDiv.innerHTML = `<pre>${data.output}</pre>`;
+  });
 
   loadGroup().then(loadBalances);
 });
