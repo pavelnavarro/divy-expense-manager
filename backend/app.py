@@ -15,6 +15,7 @@ from backend.routes.personal_routes  import personal_bp
 from backend.routes.shared_routes    import shared_bp
 from backend.routes.calendar_routes  import calendar_bp
 from backend.routes.frontend_routes  import frontend_bp
+from backend.routes.gemini_routes import gemini_bp
 
 
 def create_app():
@@ -52,6 +53,7 @@ def create_app():
     app.register_blueprint(personal_bp,  url_prefix='/api/personal')
     app.register_blueprint(shared_bp,    url_prefix='/api/shared')
     app.register_blueprint(calendar_bp,  url_prefix='/api/calendar')
+    app.register_blueprint(gemini_bp)
     app.register_blueprint(frontend_bp,  url_prefix='')
 
     return app

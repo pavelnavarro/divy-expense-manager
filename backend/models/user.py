@@ -3,16 +3,18 @@
 from datetime import datetime
 from backend.extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.dialects.postgresql import JSON
 
 class User(db.Model):
     __tablename__ = 'user'
-
+    
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
+    google_calendar_token = db.Column(JSON, nullable=True)
+    
     # -- relationships --
     # personal expenses
     personal_expenses = db.relationship('PersonalExpense', backref='user', lazy='dynamic')
