@@ -11,15 +11,8 @@ from flask_jwt_extended import (jwt_required, get_jwt_identity, verify_jwt_in_re
 
 frontend_bp = Blueprint('frontend', __name__)
 
-@frontend_bp.route('/')
+@frontend_bp.route('/', methods=['GET'])
 def index():
-    verify_jwt_in_request(optional=True)
-    uid = get_jwt_identity()
-
-    if uid:                          # user already logged in
-        return redirect(url_for('frontend.dashboard'))
-
-    # no token ⇒ show public landing page
     return render_template('index.html'), 200
 
 @frontend_bp.route('/login', methods=['GET'])
