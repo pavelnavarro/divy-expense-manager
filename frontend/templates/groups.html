@@ -25,7 +25,7 @@
 {% endblock %}
 
 {% block scripts %}
-  <script>
+    <script>
     const CURRENT_USER_ID = {{ user_id | tojson }};
   </script>
   <script src="{{ url_for('static', filename='js/groups.js') }}"></script>
