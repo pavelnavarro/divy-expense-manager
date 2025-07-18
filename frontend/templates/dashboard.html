@@ -4,24 +4,23 @@
 
 {% block content %}
   <!-- Welcome message -->
-  <h2>Welcome back, {{ username }}!</h2>
-
+  <h2>Welcome back, <span class="username">{{ username }}</span>!</h2>
   <!-- Summary cards -->
-  <section class="summary-cards">
+  <section class="dashboard-cards">
     <!-- Total personal expenses this month -->
-    <div class="card">
+    <div class="dashboard-card">
       <h3>Total Personal Expenses (This Month)</h3>
       <p>${{ personal_total }}</p>
     </div>
 
     <!-- Shared balance summary -->
-    <div class="card">
+    <div class="dashboard-card">
       <h3>Shared Balance</h3>
       <p>${{ shared_balance }}</p>
     </div>
 
     <!-- "Add Expense" button -->
-    <div class="card">
+    <div class="dashboard-card">
       <h3>Quick Actions</h3>
       <a href="{{ url_for('frontend.add_expense_page') }}" class="btn">Add Expense</a>
       <a href="/api/auth/calendar/connect" class="btn btn-outline-danger mt-2">Connect Google Calendar</a>

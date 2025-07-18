@@ -10,7 +10,10 @@
 <body>
   <header>
     <a href="{{ url_for('frontend.index') }}" class="logo-link">
-    <h1>Divy</h1>
+    <h1 class="logo-text">
+      <img src="{{ url_for('static', filename='images/wallet.png') }}" alt="Wallet" style="height: 1.5em; vertical-align: middle; margin-right: 0.5rem;">
+      Divy
+    </h1>
   </a>
     {% if request.cookies.get('access_token') %}
     <nav>
@@ -31,10 +34,13 @@
     {% block content %}{% endblock %}
   </main>
 
-  <footer>
+<footer>
     <hr>
-    <p>&copy; 2025 Divy</p>
-  </footer>
+    <p>
+        <img src="{{ url_for('static', filename='images/wallet.png') }}" alt="Wallet" class="footer-logo">
+        &copy; 2025 Divy
+    </p>
+</footer>
 
   <script>
     document.getElementById('logout-link')?.addEventListener('click', ev => {
