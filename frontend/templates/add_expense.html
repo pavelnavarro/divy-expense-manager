@@ -1,4 +1,3 @@
-<!-- frontend/templates/add_expense.html -->
 {% extends "layout.html" %}
 {% block title %}Add Expense | Divy{% endblock %}
 
@@ -16,7 +15,7 @@
 
   <!-- Amount or Receipt (shared) -->
   <div class="form-group" id="amountGroup">
-    <label for="amount">Amount</label>
+    <label for="amount">Amount $USD</label>
     <input type="number" id="amount" name="amount" step="0.01" class="form-control" placeholder="0.00">
   </div>
   <div class="form-group" id="receiptGroup" style="display:none;">
@@ -42,15 +41,23 @@
     <div id="noGroups" class="alert alert-warning" style="display:none;">
       You are not in any groups. Cannot add a shared expense.
     </div>
+
     <!-- Group dropdown -->
     <div id="groupSection" class="form-group" style="display:none;">
       <label for="group">Group</label>
       <select id="group" name="group_id" class="form-control"></select>
     </div>
+
+    <!-- Who paid -->
+    <div class="form-group">
+      <label for="paidBy">Who paid?</label>
+      <select id="paidBy" name="paid_by" class="form-control" required></select>
+    </div>
+
     <!-- Context / Notes -->
     <div class="form-group">
       <label for="notes">Context / Notes (optional)</label>
-      <textarea id="notes" name="notes" class="form-control" placeholder="Extra details for AI (optional)"></textarea>
+      <textarea id="notes" name="context" class="form-control" placeholder="Extra details for AI (optional)"></textarea>
     </div>
   </div>
 

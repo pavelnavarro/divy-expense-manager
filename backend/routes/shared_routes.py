@@ -79,10 +79,12 @@ def get_my_groups():
 def get_group_info(group_id):
     """Get basic info and member list for a group."""
     group = Group.query.get_or_404(group_id)
+    creator = User.query.get(group.created_by)
     return jsonify({
         "id": group.id,
         "name": group.name,
         "created_by": group.created_by,
+        "created_by_username": creator.username,
         "members": [{"id": u.id, "username": u.username} for u in group.members]
     }), 200
 
@@ -100,6 +102,7 @@ def add_shared_expense():
     data = request.get_json() or {}
     description = data.get('description')
     amount = float(data.get('amount', 0))
+    date_str    = data.get('date')
     group_id = data.get('group_id')
     paid_by = data.get('paid_by')
     excluded = data.get('excluded_members', [])
@@ -112,14 +115,26 @@ def add_shared_expense():
     participants = [u.username for u in included_users]
 
     splits_suggestion = split_expense_with_context(description, amount, participants, context)
+    if all(isinstance(k, str) for k in splits_suggestion.keys()):
+        remapped = {}
+        for uname, owed in splits_suggestion.items():
+            # find the matching User object
+            user_obj = next((u for u in included_users if u.username == uname), None)
+            if user_obj:
+                remapped[user_obj.id] = owed
+        splits_suggestion = remapped
 
-    # Fallback to equal split if Gemini returns invalid data
-    if (
-        not isinstance(splits_suggestion, dict)
-        or any(not isinstance(v, (int, float)) for v in splits_suggestion.values())
-    ):
-        share = round(amount / len(included), 2) if included else 0
-        splits_suggestion = {uid: share for uid in included}
+        # Fallback to equal split if Gemini returns invalid data or came back empty
+    payer_id = int(paid_by)
+    n = len(included)
+    share = round(amount / n, 2) if n else 0
+    splits_suggestion = {}
+
+    for uid in included:
+        if uid == payer_id:
+            splits_suggestion[uid] = round(amount - share, 2) * -1
+        else:
+            splits_suggestion[uid] = share
 
     expense = SharedExpense(
         group_id=group_id,
@@ -216,31 +231,39 @@ def get_group_history(group_id):
         .filter_by(group_id=group_id) \
         .order_by(SharedExpense.created_at.desc()) \
         .all()
+
     expense_list = [{
-        "id": e.id,
-        "description": e.description,
-        "amount": e.amount,
-        "paid_by": e.paid_by,
-        "notes": e.notes,
-        "created_at": e.created_at.isoformat()
+        "id":                e.id,
+        "description":       e.description,
+        "amount":            e.amount,
+        "paid_by":           e.paid_by,
+        "paid_by_username":  User.query.get(e.paid_by).username,
+        "notes":             e.notes,
+        "date":              e.created_at.isoformat()
     } for e in expenses]
 
+    # fetch payments too, if you want to bundle them here
     group = Group.query.get_or_404(group_id)
     uids = [u.id for u in group.members]
     payments = Payment.query \
         .filter(Payment.from_user.in_(uids), Payment.to_user.in_(uids)) \
         .order_by(Payment.created_at.desc()) \
         .all()
+
     payment_list = [{
-        "id": p.id,
-        "from_user": p.from_user,
-        "to_user": p.to_user,
-        "amount": p.amount,
-        "status": p.status,
-        "created_at": p.created_at.isoformat()
+        "id":         p.id,
+        "from_user":  p.from_user,
+        "to_user":    p.to_user,
+        "amount":     p.amount,
+        "status":     p.status,
+        "date":       p.created_at.isoformat()
     } for p in payments]
 
-    return jsonify(expenses=expense_list, payments=payment_list), 200
+    return jsonify(
+      expenses=expense_list,
+      payments=payment_list
+    ), 200
+
 
 @shared_bp.route('/expense/<int:expense_id>', methods=['DELETE'])
 def delete_shared_expense(expense_id):
