@@ -7,6 +7,9 @@ from backend.models.shared import Group, SharedExpense, Split, Payment
 from backend.models.user import User
 from backend.utils.split_logic import calculate_balances_from_splits, minimize_cash_flow, filter_members
 from backend.utils.gemini_utils import split_expense_with_context, extract_from_receipt
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+from datetime import datetime, timedelta
 
 shared_bp = Blueprint('shared', __name__)
 
@@ -155,6 +158,42 @@ def add_shared_expense():
         ))
 
     db.session.commit()
+        # === Crear evento en Google Calendar para cada miembro con token ===
+    for member in group.members:
+        if not member.google_calendar_token:
+            continue  # Ignora si no ha conectado su cuenta
+
+        creds_data = member.google_calendar_token
+        creds = Credentials(
+            token=creds_data['token'],
+            refresh_token=creds_data.get('refresh_token'),
+            token_uri=creds_data['token_uri'],
+            client_id=creds_data['client_id'],
+            client_secret=creds_data['client_secret'],
+            scopes=creds_data['scopes']
+        )
+
+        try:
+            service = build('calendar', 'v3', credentials=creds)
+
+            event = {
+                'summary': f"[Divy] Expense Reminder: {description}",
+                'description': f"You were part of the shared expense in group '{group.name}'.",
+                'start': {
+                    'dateTime': (datetime.utcnow() + timedelta(days=3)).isoformat() + 'Z',
+                    'timeZone': 'UTC',
+                },
+                'end': {
+                    'dateTime': (datetime.utcnow() + timedelta(days=3, minutes=30)).isoformat() + 'Z',
+                    'timeZone': 'UTC',
+                },
+            }
+
+            service.events().insert(calendarId='primary', body=event).execute()
+
+        except Exception as e:
+            print(f"[Calendar] Error creating event for {member.username}: {e}")
+
     return jsonify(
         message="Expense added",
         expense_id=expense.id,
