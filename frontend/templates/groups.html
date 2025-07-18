@@ -2,30 +2,33 @@
 {% block title %}Groups | Divy{% endblock %}
 
 {% block content %}
-  <h2>Your Groups</h2>
-  <button id="createGroupBtn" class="btn">Create Group</button>
+  <h2 class="page-heading">Your Groups</h2>
+  <button id="createGroupBtn" class="btn btn-dark mb-3">Create Group</button>
 
-  <div id="groupsList"></div>
+  <div id="groupsList" class="group-list"></div>
 
   <!-- Create Group Modal -->
   <div id="createGroupModal" class="modal" style="display:none;">
-    <div class="modal-content">
+    <div class="modal-content modal-card">
       <span id="closeGroupModal" class="close">&times;</span>
-      <h3>Create Group</h3>
+      <h3 class="modal-title">Create Group</h3>
       <form id="createGroupForm">
-        <label for="groupName">Group Name</label>
-        <input type="text" id="groupName" name="name" required>
+        <label for="groupName" class="modal-label">Group Name</label>
+        <input type="text" id="groupName" name="name" class="form-control" required>
 
-        <div id="memberFields"><!-- rows go here --></div>
-        <button type="button" id="addMemberBtn">+ Add Member</button>
-        <button type="submit">Create</button>
+        <div id="memberFields" class="member-fields"><!-- rows go here --></div>
+
+        <div class="modal-actions">
+          <button type="button" id="addMemberBtn" class="btn btn-light">+ Add Member</button>
+          <button type="submit" class="btn btn-dark">Create</button>
+        </div>
       </form>
     </div>
   </div>
 {% endblock %}
 
 {% block scripts %}
-    <script>
+  <script>
     const CURRENT_USER_ID = {{ user_id | tojson }};
   </script>
   <script src="{{ url_for('static', filename='js/groups.js') }}"></script>

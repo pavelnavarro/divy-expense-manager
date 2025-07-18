@@ -2,12 +2,12 @@
 {% block title %}Group Details | Divy{% endblock %}
 
 {% block content %}
-<h2 id="groupName">Loading…</h2>
-<p>Created by: <span id="groupCreator">‑</span></p>
+<h2 id="groupName" class="page-heading">Loading…</h2>
+<p class="creator-line">Created by: <span id="groupCreator">‑</span></p>
 
-<section>
-  <h3>Group Balances</h3>
-  <table class="table">
+<section class="balances-section">
+  <h3 class="section-heading">Group Balances</h3>
+  <table class="table balances-table">
     <thead>
       <tr>
         <th>Member</th>
@@ -18,17 +18,17 @@
   </table>
 </section>
 
-<section>
-  <h3>Members</h3>
-  <ul id="memberList"></ul>
+<section class="members-section">
+  <h3 class="section-heading">Members</h3>
+  <ul id="memberList" class="member-list"></ul>
 </section>
 
-<div class="actions mt-3">
-  <a href="{{ url_for('frontend.add_expense_page') }}" class="btn btn-primary">Add Shared Expense</a>
-  <button id="suggestPaymentsBtn" class="btn btn-info">Suggest Payments</button>
+<div class="actions mt-3 action-buttons">
+  <a href="{{ url_for('frontend.add_expense_page') }}" class="btn btn-dark">Add Shared Expense</a>
+  <button id="suggestPaymentsBtn" class="btn btn-light">Suggest Payments</button>
 </div>
 
-<div id="geminiSuggestions" class="mt-4"></div>
+<div id="geminiSuggestions" class="mt-4 gemini-output"></div>
 {% endblock %}
 
 {% block scripts %}
@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     g.members.forEach(m => {
       const li = document.createElement('li');
       li.textContent = m.username;
+      li.classList.add("member-item");
       memberList.appendChild(li);
     });
   }

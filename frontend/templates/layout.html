@@ -7,40 +7,35 @@
   <title>{% block title %}Divy{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
-<body>
-  <header>
+<body class="body-layout">
+  <header class="header-layout">
     <a href="{{ url_for('frontend.index') }}" class="logo-link">
-    <h1 class="logo-text">
-      <img src="{{ url_for('static', filename='images/wallet.png') }}" alt="Wallet" style="height: 1.5em; vertical-align: middle; margin-right: 0.5rem;">
-      Divy
-    </h1>
-  </a>
+      <h1 class="logo-title">Divy</h1>
+    </a>
+
     {% if request.cookies.get('access_token') %}
-    <nav>
-      <a href="{{ url_for('frontend.dashboard') }}">Dashboard</a>
-      <a href="{{ url_for('frontend.groups_page') }}">Groups</a>
-      <a href="#" id="logout-link">Log Out</a>
+    <nav class="nav-authenticated">
+      <a href="{{ url_for('frontend.dashboard') }}" class="nav-link">Dashboard</a>
+      <a href="{{ url_for('frontend.groups_page') }}" class="nav-link">Groups</a>
+      <a href="#" id="logout-link" class="nav-link">Log Out</a>
     </nav>
     {% else %}
-    <nav>
-      <a href="{{ url_for('frontend.login_page') }}">Sign In</a>
-      <a href="{{ url_for('frontend.register_page') }}">Register</a>
+    <nav class="nav-unauthenticated">
+      <a href="{{ url_for('frontend.login_page') }}" class="nav-link">Sign In</a>
+      <a href="{{ url_for('frontend.register_page') }}" class="nav-link">Register</a>
     </nav>
     {% endif %}
-    <hr>
+    <hr class="divider">
   </header>
 
   <main class="main-content">
     {% block content %}{% endblock %}
   </main>
 
-<footer>
-    <hr>
-    <p>
-        <img src="{{ url_for('static', filename='images/wallet.png') }}" alt="Wallet" class="footer-logo">
-        &copy; 2025 Divy
-    </p>
-</footer>
+  <footer class="footer-layout">
+    <hr class="divider">
+    <p class="footer-text">&copy; 2025 Divy</p>
+  </footer>
 
   <script>
     document.getElementById('logout-link')?.addEventListener('click', ev => {
